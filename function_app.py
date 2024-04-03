@@ -1,16 +1,23 @@
 import logging
 import azure.functions as func
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
-# Obter data e hora atual
-now = datetime.now()
+def get_blob_path():
+    # Obter data e hora atual
+    #now = datetime.now() + timedelta(days=3)  # Adicionando um dia
+    now = datetime.now()
 
-# Extrair informações
-year = now.strftime('%Y')
-month = now.strftime('%m')
-day = now.strftime('%d')
+    # Extrair informações
+    year = now.strftime('%Y')
+    month = now.strftime('%m')
+    day = now.strftime('%d')
+
+    # Caminho para o blob
+    path = f"fsbdntest/{year}/{month}/{day}/Wiki-{year}-{month}-{day}.json"
+    
+    return path
 
 # Inicializa uma lista para armazenar os registros
 records = []
@@ -22,7 +29,7 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 @app.route(route="http_trigger")
 
 @app.blob_output(arg_name="outputblob",
-                path=f"fsbdntest/{year}/{month}/{day}/Wiki-{year}-{month}-{day}.json",
+                path=get_blob_path(),
                 connection="AzureWebJobsStorage")
 
 
@@ -31,7 +38,7 @@ def http_trigger(req: func.HttpRequest, outputblob: func.Out[str]) -> func.HttpR
     logging.info('Python HTTP trigger function processed a request.')
 
     blob_service = "https://strfuncappbdn.blob.core.windows.net/"
-    path=f"fsbdntest/{year}/{month}/{day}/Wiki-{year}-{month}-{day}.json"
+    path=get_blob_path()
 
     req_body = req.get_json()
 
