@@ -3,6 +3,7 @@ import azure.functions as func
 import json
 from datetime import datetime, timedelta
 
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 def get_blob_path():
     # Obter data e hora atual
@@ -16,13 +17,12 @@ def get_blob_path():
 
     # Caminho para o blob
     path = f"fsbdntest/{year}/{month}/{day}/Wiki-{year}-{month}-{day}.json"
+    print(path)
     
     return path
 
 # Inicializa uma lista para armazenar os registros
 records = []
-
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.function_name(name="http_trigger")
 
